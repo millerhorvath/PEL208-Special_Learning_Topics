@@ -1,7 +1,8 @@
 
 .vs/
 Debug/
+Release/
 x64/
-PEL208_FEI-PCA/.idea/
-PEL208_FEI-PCA/Debug/
-PEL208_FEI-PCA/x64/
+PEL208-Special_Learning_Topics/Debug/
+PEL208-Special_Learning_Topics/Release/
+PEL208-Special_Learning_Topics/x64/

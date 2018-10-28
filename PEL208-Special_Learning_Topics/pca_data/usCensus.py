@@ -7,7 +7,7 @@ n_features = 2  # Number of Feature
 
 
 # Read rebuilt data after dimensionality reduction
-f = open("usCensus.txt", "r")  # Open file
+f = open(os.path.join("..", "usCensus.txt"), "r")  # Open file
 # f = open("usCensus_rebuilt_comp_1.csv", "r")  # Open file
 data = f.readlines()  # Read all data in file
 f.close()  # Close file

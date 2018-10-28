@@ -3,18 +3,24 @@
 #include "least_squares.h"
 #include <iostream>
 #include <cstdio>
+#include <filesystem>
 
 using namespace Eigen;
 using namespace std;
 
-void mhorvath::runPCAExperimentEx(const MatrixXd &D, const char * const f_label)
+void mhorvath::runPCAExperimentEx(const MatrixXd &D, const char * const f_label = "", const char * const out_path = "")
 {
-	unsigned const int n(D.cols()); // Number of features
-	unsigned const int m(D.rows()); // Number of observations
-	unsigned const int p_m(std::min((unsigned int)10, m)); // Limit of lines to print
-	unsigned const int p_n(std::min((unsigned int)10, n)); // Limit of lines to print
+	unsigned const int n((unsigned int)D.cols()); // Number of features
+	unsigned const int m((unsigned int)D.rows()); // Number of observations
+	unsigned const int p_m((unsigned int)std::min((unsigned int)10, m)); // Limit of lines to print
+	unsigned const int p_n((unsigned int)std::min((unsigned int)10, n)); // Limit of lines to print
 	FILE *f; // File used
+	filesystem::path out_file; // Used to build output path
 	char f_name[256]; // Used to build output file name
+
+	if (strcmp(out_path, "")) {
+		cout << filesystem::create_directory(out_path); // Create output path
+	}
 
 	cout << "######### " << f_label << " - PCA EXPERIMENT ########## " << endl << endl;
 
@@ -58,12 +64,14 @@ void mhorvath::runPCAExperimentEx(const MatrixXd &D, const char * const f_label)
 		cout << rebuilt_D[i - 1].block(0, 0, p_m, p_n) << endl << endl;
 	}
 
+
+	// Write all results in file
 	sprintf(f_name, "%s_components.csv", f_label);
 
 	cout << "GENERATED FILES: " << endl;
 
-	// Write all results in file
-	f = fopen(f_name, "w");
+	out_file = filesystem::current_path() / out_path / f_name;
+	f = fopen(out_file.string().c_str(), "w");
 
 	for (int c = 0; c < pca.components().cols(); c++) {
 		fprintf(f, "%f", pca.components()(0, c));
@@ -74,11 +82,15 @@ void mhorvath::runPCAExperimentEx(const MatrixXd &D, const char * const f_label)
 	}
 
 	fclose(f);
+
 	cout << f_name << endl;
+	
 
 	for (int i = 0; i < D.cols(); i++) {
 		sprintf(f_name, "%s_rebuilt_comp_%d.csv", f_label, i + 1);
-		f = fopen(f_name, "w");
+		out_file = filesystem::current_path() / out_path / f_name;
+
+		f = fopen(out_file.string().c_str(), "w");
 
 		for (int l = 0; l < rebuilt_D[i].rows(); l++) {
 			fprintf(f, "%f", rebuilt_D[i](l, 0));
@@ -97,14 +109,19 @@ void mhorvath::runPCAExperimentEx(const MatrixXd &D, const char * const f_label)
 	system("CLS");
 }
 
-void mhorvath::runPCAExperiment(const MatrixXd &D, const char * const f_label)
+void mhorvath::runPCAExperiment(const MatrixXd &D, const char * const f_label = "", const char * const out_path = "")
 {
-	unsigned const int n(D.cols()); // Number of features
-	unsigned const int m(D.rows()); // Number of observations
-	unsigned const int p_m(std::min((unsigned int)10, m)); // Limit of lines to print
-	unsigned const int p_n(std::min((unsigned int)10, n)); // Limit of lines to print
+	unsigned const int n((unsigned int)D.cols()); // Number of features
+	unsigned const int m((unsigned int)D.rows()); // Number of observations
+	unsigned const int p_m((unsigned int)std::min((unsigned int)10, m)); // Limit of lines to print
+	unsigned const int p_n((unsigned int)std::min((unsigned int)10, n)); // Limit of lines to print
 	FILE *f; // File used
+	filesystem::path out_file; // Used to build output path
 	char f_name[256]; // Used to build output file name
+
+	if (strcmp(out_path, "")) {
+		cout << filesystem::create_directory(out_path); // Create output path
+	}
 
 	cout << "######### " << f_label << " - PCA EXPERIMENT ########## " << endl << endl;
 
@@ -150,10 +167,11 @@ void mhorvath::runPCAExperiment(const MatrixXd &D, const char * const f_label)
 
 	sprintf(f_name, "%s_components.csv", f_label);
 
+	// Write all results in file
 	cout << "GENERATED FILES: " << endl;
 
-	// Write all results in file
-	f = fopen(f_name, "w");
+	out_file = filesystem::current_path() / out_path / f_name;
+	f = fopen(out_file.string().c_str(), "w");
 
 	for (int c = 0; c < pca.components().cols(); c++) {
 		fprintf(f, "%f", pca.components()(0, c));
@@ -166,34 +184,26 @@ void mhorvath::runPCAExperiment(const MatrixXd &D, const char * const f_label)
 	fclose(f);
 	cout << f_name << endl;
 
-	//sprintf(f_name, "%s_rebuilt.csv", f_label);
-	//f = fopen(f_name, "w");
-
-	//for (int l = 0; l < rebuilt_D[n - 1].rows(); l++) {
-	//	fprintf(f, "%f", rebuilt_D[n - 1](l, 0));
-	//	for (int c = 1; c < rebuilt_D[n - 1].cols(); c++) {
-	//		fprintf(f, ",%f", rebuilt_D[n - 1](l, c));
-	//	}
-	//	fprintf(f, "\n");
-	//}
-
-	//fclose(f);
-	//cout << f_name << endl;
 	cout << endl;
 
 	system("PAUSE");
 	system("CLS");
 }
 
-void mhorvath::runLeastSquaresExperiment(const MatrixXd &X, const VectorXd &y, const char * const f_label = "")
+void mhorvath::runLeastSquaresExperiment(const MatrixXd &X, const VectorXd &y, const char * const f_label = "", const char * const out_path = "")
 {
-	unsigned const int n(X.cols()); // Number of features
-	unsigned const int m(X.rows()); // Number of observations
-	unsigned const int p_m(std::min((unsigned int) 10, m)); // Limit of lines to print
-	unsigned const int p_n(std::min((unsigned int) 10, n)); // Limit of lines to print
+	unsigned const int n((unsigned int)X.cols()); // Number of features
+	unsigned const int m((unsigned int)X.rows()); // Number of observations
+	unsigned const int p_m((unsigned int)std::min((unsigned int) 10, m)); // Limit of lines to print
+	unsigned const int p_n((unsigned int)std::min((unsigned int) 10, n)); // Limit of lines to print
 	VectorXd Beta(n); // Least squares coefficients
 	FILE *f; // File used
+	filesystem::path out_file; // Used to build output path
 	char f_name[256]; // Used to build output file name
+
+	if (strcmp(out_path, "")) {
+		cout << filesystem::create_directory(out_path); // Create output path
+	}
 
 	cout << "######### " << f_label << " - LEAST SQUARES EXPERIMENT ########## " << endl << endl;
 
@@ -207,10 +217,11 @@ void mhorvath::runLeastSquaresExperiment(const MatrixXd &X, const VectorXd &y, c
 
 	sprintf(f_name, "%s_coefs.csv", f_label); // Build output file name
 
+	// Write all results in file
 	cout << "GENERATED FILES: " << endl;
 
-	// Write all results in file
-	f = fopen(f_name, "w");
+	out_file = filesystem::current_path() / out_path / f_name;
+	f = fopen(out_file.string().c_str(), "w");
 
 	fprintf(f, "%f", Beta(0));
 	for (int i = 1; i < Beta.size(); i++) {
@@ -234,6 +245,7 @@ void mhorvath::inClassExample()
 	MatrixXd X(m, n); // Data matrix
 	VectorXd y(m); // Least squares target variable
 	const char * const ex_label = "inClassExample"; // Experiment label
+	const char * const output_folder = "pca_data"; // Output folder
 
 	// Feature matrix X (mannualy defined)
 	D << 2.5, 2.4,
@@ -256,8 +268,8 @@ void mhorvath::inClassExample()
 	// Get target variable from data
 	y = D.col(n - 1);
 
-	mhorvath::runPCAExperimentEx(D, ex_label);
-	mhorvath::runLeastSquaresExperiment(X, y, ex_label);
+	mhorvath::runPCAExperimentEx(D, ex_label, output_folder);
+	mhorvath::runLeastSquaresExperiment(X, y, ex_label, output_folder);
 }
 
 void mhorvath::alpsWater()
@@ -269,6 +281,7 @@ void mhorvath::alpsWater()
 	MatrixXd X(m, n); // Data matrix
 	VectorXd y(m); // Least squares target variable
 	const char * const ex_label = "alpsWater"; // Experiment label
+	const char * const output_folder = "pca_data"; // Output folder
 	char data[128];
 	int temp; // Used to read useles dataset column
 	FILE * f; // Used to read dataset file
@@ -294,8 +307,8 @@ void mhorvath::alpsWater()
 	// Get target variable from data
 	y = D.col(0);
 
-	mhorvath::runPCAExperimentEx(D, ex_label);
-	mhorvath::runLeastSquaresExperiment(X, y, ex_label);
+	mhorvath::runPCAExperimentEx(D, ex_label, output_folder);
+	mhorvath::runLeastSquaresExperiment(X, y, ex_label, output_folder);
 }
 
 void mhorvath::booksXgrades()
@@ -307,10 +320,11 @@ void mhorvath::booksXgrades()
 	MatrixXd X(m, n); // Data matrix
 	VectorXd y(m); // Least squares target variable
 	const char * const ex_label = "booksXgrades"; // Experiment label
+	const char * const output_folder = "pca_data"; // Output folder
 	FILE * f; // Used to read dataset file
 
 	// Read dataset from file
-	f = fopen("Books_attend_grade.dat", "r");
+	f = fopen("Books_attend_grade.txt", "r");
 
 	// Read line-by-line
 	for (int i = 0; i < m; i++) {
@@ -328,8 +342,8 @@ void mhorvath::booksXgrades()
 	// Get target variable from data
 	y = D.col(2);
 
-	mhorvath::runPCAExperimentEx(D, ex_label);
-	mhorvath::runLeastSquaresExperiment(X, y, ex_label);
+	mhorvath::runPCAExperimentEx(D, ex_label, output_folder);
+	mhorvath::runLeastSquaresExperiment(X, y, ex_label, output_folder);
 }
 
 void mhorvath::usCensus()
@@ -341,6 +355,7 @@ void mhorvath::usCensus()
 	MatrixXd X(m, n); // Data matrix
 	VectorXd y(m); // Least squares target variable
 	const char * const ex_label = "usCensus"; // Experiment label
+	const char * const output_folder = "pca_data"; // Output folder
 	FILE * f; // Used to read dataset file
 
 	// Read dataset from file
@@ -362,8 +377,8 @@ void mhorvath::usCensus()
 	// Get target variable from data
 	y = D.col(1);
 
-	mhorvath::runPCAExperimentEx(D, ex_label);
-	mhorvath::runLeastSquaresExperiment(X, y, ex_label);
+	mhorvath::runPCAExperimentEx(D, ex_label, output_folder);
+	mhorvath::runLeastSquaresExperiment(X, y, ex_label, output_folder);
 }
 
 void mhorvath::hald()

@@ -11,7 +11,7 @@ n_features = 3  # Number of Feature
 
 # Read rebuilt data after dimensionality reduction
 # f = open("booksXgrades_rebuilt_comp_1.csv", "r")  # Open file
-f = open("Books_attend_grade.dat", "r")  # Open file
+f = open(os.path.join("..", "Books_attend_grade.txt"), "r")  # Open file
 f.readline()
 data = f.readlines()  # Read all data in file
 f.close()  # Close file

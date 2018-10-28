@@ -8,7 +8,7 @@ n_features = 2  # Number of Feature
 
 
 # Read rebuilt data after dimensionality reduction
-f = open("alpswater.txt", "r")  # Open file
+f = open(os.path.join("..", "alpswater.txt"), "r")  # Open file
 # f = open("alpsWater_rebuilt_comp_1.csv", "r")  # Open file
 f.readline()
 data = f.readlines()  # Read all data in file

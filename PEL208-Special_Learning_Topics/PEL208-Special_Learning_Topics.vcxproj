@@ -20,8 +20,8 @@
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>
-    <ProjectGuid>{A1BAFA61-21A3-401D-8760-493B6FA25190}</ProjectGuid>
-    <RootNamespace>PEL208FEIPCA</RootNamespace>
+    <ProjectGuid>{52F48C3D-4F5F-45E6-9710-790E94016075}</ProjectGuid>
+    <RootNamespace>PEL208SpecialLearningTopics</RootNamespace>
     <WindowsTargetPlatformVersion>10.0.17134.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -76,7 +76,8 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>C:\Users\mille\source\repos\Bianchi\PEL208_FEI-PCA\PEL208_FEI-PCA\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\mille\source\repos\Bianchi\PEL208-Special_Learning_Topics\PEL208-Special_Learning_Topics\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -85,7 +86,8 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>C:\Users\mille\source\repos\Bianchi\PEL208-Special_Learning_Topics\PEL208_FEI-PCA\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\mille\source\repos\Bianchi\PEL208-Special_Learning_Topics\PEL208-Special_Learning_Topics\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -96,6 +98,8 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>C:\Users\mille\source\repos\Bianchi\PEL208-Special_Learning_Topics\PEL208-Special_Learning_Topics\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
@@ -110,6 +114,8 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>C:\Users\mille\source\repos\Bianchi\PEL208-Special_Learning_Topics\PEL208-Special_Learning_Topics\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
@@ -117,15 +123,23 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="assignments.h" />
+    <ClInclude Include="least_squares.h" />
+    <ClInclude Include="matrix_inv.h" />
+    <ClInclude Include="pca.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="alpswater.txt" />
+    <Text Include="Books_attend_grade.txt" />
+    <Text Include="hald.txt" />
+    <Text Include="usCensus.txt" />
+  </ItemGroup>
+  <ItemGroup>
     <ClCompile Include="assignments.cpp" />
     <ClCompile Include="least_squares.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="matrix_inv.cpp" />
     <ClCompile Include="pca.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="assignments.h" />
-    <ClInclude Include="least_squares.h" />
-    <ClInclude Include="pca.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
