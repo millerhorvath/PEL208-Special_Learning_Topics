@@ -1,6 +1,7 @@
 #include "assignments.h"
 #include "pca.h"
 #include "least_squares.h"
+#include "lda.h"
 #include <iostream>
 #include <cstdio>
 #include <filesystem>
@@ -397,7 +398,7 @@ void mhorvath::hald()
 	f = fopen("hald.txt", "r");
 
 	fgets(data, 126, f); // Remove header line
-	
+
 	// Read line-by-line
 	for (int i = 0; i < m; i++) {
 		fscanf(f, "%lf %lf %lf %lf %lf", &y(i), &D(i, 0), &D(i, 1), &D(i, 2), &D(i, 3));
@@ -420,7 +421,7 @@ void mhorvath::hald()
 	cout << "Eigenvalues =" << endl << pca.values() << endl << endl;
 	cout << "Explained Variance =" << endl << pca.explained_variace_ratio() << endl << endl;
 	cout << "Cumulative Explained Variance =" << endl;
-	
+
 	double sum_variance(0.0);
 
 	for (int i = 0; i < pca.explained_variace_ratio().size(); i++) {
@@ -430,6 +431,44 @@ void mhorvath::hald()
 
 	cout << endl << endl;
 
+
+	system("PAUSE");
+}
+
+void mhorvath::iris()
+{
+	// In class example: Some Data
+	const unsigned int n(4); // Number of features
+	const unsigned int m(150); // Number of observations
+	const unsigned int p_n(min(n, (unsigned int)10)); // Number of features
+	const unsigned int p_m(min(m, (unsigned int)10)); // Number of observations
+	MatrixXd D(m, n); // Data matrix
+	vector<string> classes(m); // Least squares target variable
+	const char * const ex_label = "iris"; // Experiment label
+	FILE * f; // Used to read dataset file
+	char data[128];
+
+	// Read dataset from file
+	f = fopen("iris.txt", "r");
+
+	// Read line-by-line
+	for (int i = 0; i < m; i++) {
+		fscanf(f, "%lf,%lf,%lf,%lf,%s\n", &D(i, 0), &D(i, 1), &D(i, 2), &D(i, 3), &data);
+		classes[i] = data;
+	}
+
+	fclose(f); // Close file
+
+	mhorvath::PCA pca(mhorvath::lda(D, classes));
+
+	cout << "Data =" << endl << D.block(0, 0, p_m, p_n) << endl << endl;
+	cout << "Data Mean =" << endl << pca.getOriginalMean().segment(0, p_n) << endl << endl;
+	cout << "DataAdjust =" << endl << pca.getDataAdjust().block(0, 0, p_n, p_n) << endl << endl;
+	cout << "Covariance =" << endl << pca.covariance().block(0, 0, p_n, p_n) << endl << endl;
+	cout << "Eigenvalues =" << endl << pca.values().segment(0, p_n) << endl << endl;
+	cout << "Eigenvectors =" << endl << pca.components().block(0, 0, p_n, p_n) << endl << endl;
+	cout << "Explained Variance =" << endl << pca.explained_variace_ratio().segment(0, p_n) << endl << endl;
+	cout << "Sum of Explained Variance =" << endl << pca.explained_variace_ratio().sum() << endl << endl;
 
 	system("PAUSE");
 }

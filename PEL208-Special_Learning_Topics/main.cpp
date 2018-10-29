@@ -5,15 +5,7 @@
 using namespace std;
 
 int main() {
-	mhorvath::inClassExample();
-
-	mhorvath::alpsWater();
-
-	mhorvath::booksXgrades();
-
-	mhorvath::usCensus();
-
-	mhorvath::hald();
+	mhorvath::iris();
 
 	return 0;
 }
