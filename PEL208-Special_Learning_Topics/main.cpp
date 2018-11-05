@@ -5,7 +5,8 @@
 using namespace std;
 
 int main() {
-	mhorvath::iris();
+	mhorvath::inClassExampleLDA();
+	//mhorvath::iris();
 
 	return 0;
 }

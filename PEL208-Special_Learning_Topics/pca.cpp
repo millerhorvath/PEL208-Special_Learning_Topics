@@ -20,7 +20,7 @@ mhorvath::PCA::PCA(const MatrixXd &A)
 	MatrixXd evecs(A.cols(), A.cols()); // Unordered eigenvectors
 	VectorXd evals(A.cols()); // Unordered eigenvalues
 	vector<tuple<int, double *>> ord; // Vector to support eigen values/vectors sorting
-	double evalues_sum(0.0); // Sum of eigenvalues (Used to compute proportional )
+	double evalues_sum(0.0); // Sum of eigenvalues (Used to compute proportional explained variance)
 
 	// Compute the mean value of each column
 	this->OriginalMean = A.colwise().mean();

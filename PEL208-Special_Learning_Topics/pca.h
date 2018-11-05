@@ -29,7 +29,6 @@ namespace mhorvath {
 		Eigen::RowVectorXd getOriginalMean();
 
 		Eigen::MatrixXd transform(const int &);
-
 		Eigen::MatrixXd rebuild(const Eigen::MatrixXd &);
 	};
 }
