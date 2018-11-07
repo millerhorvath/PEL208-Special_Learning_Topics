@@ -92,36 +92,39 @@ data_mean = np.array([3.18182, 2.72727])
 plt.grid(linestyle=':')
 # plt.plot(comp_X + data_mean[0], comp_Y + data_mean[1], 'b')
 # plt.plot(comp_X + data_mean[0], comp_Y2 + data_mean[1], 'g')
-x = X_orig['1']
-plt.plot(x[:, 0], x[:, 1], 'rx', label='classe 1')
 x = X_orig['2']
 plt.plot(x[:, 0], x[:, 1], 'bo', label='classe 2')
+x = X_orig['1']
+plt.plot(x[:, 0], x[:, 1], 'rx', label='classe 1')
 plt.legend()
 # plt.plot(data_mean[0], data_mean[1], 'kX')
+plt.savefig(os.path.join('plots', 'inClassExample.png'))
 
 plt.show()
 
 plt.grid(linestyle=':')
 # plt.plot(comp_X + data_mean[0], comp_Y + data_mean[1], 'b')
 # plt.plot(comp_X + data_mean[0], comp_Y2 + data_mean[1], 'g')
-x = X_pca['1']
-plt.plot(x[:, 0], x[:, 1], 'rx', label='classe 1')
 x = X_pca['2']
 plt.plot(x[:, 0], x[:, 1], 'bo', label='classe 2')
+x = X_pca['1']
+plt.plot(x[:, 0], x[:, 1], 'rx', label='classe 1')
 plt.legend()
 # plt.plot(data_mean[0], data_mean[1], 'kX')
+plt.savefig(os.path.join('plots', 'inClassExample_pca.png'))
 
 plt.show()
 
 plt.grid(linestyle=':')
 # plt.plot(comp_X + data_mean[0], comp_Y + data_mean[1], 'b')
 # plt.plot(comp_X + data_mean[0], comp_Y2 + data_mean[1], 'g')
-x = X_lda['1']
-plt.plot(x[:, 0], x[:, 1], 'rx', label='classe 1')
 x = X_lda['2']
 plt.plot(x[:, 0], x[:, 1], 'bo', label='classe 2')
+x = X_lda['1']
+plt.plot(x[:, 0], x[:, 1], 'rx', label='classe 1')
 plt.legend()
 # plt.plot(data_mean[0], data_mean[1], 'kX')
+plt.savefig(os.path.join('plots', 'inClassExample_lda.png'))
 
 plt.show()
 

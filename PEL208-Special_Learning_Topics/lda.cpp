@@ -14,7 +14,7 @@ bool compEigen2(const tuple<int, double *> &A, const tuple<int, double *> &B) {
 }
 
 mhorvath::LDA::LDA(const MatrixXd &M, const vector<string> &class_vec)
-	: DataAdjust(M.rows(), M.cols()), EigenVectors(M.cols(), M.cols()),
+	: DataAdjust(M), EigenVectors(M.cols(), M.cols()),
 	EigenValues(M.cols()), ExplainedVariance(M.cols()), DataMean(M.colwise().mean()),
 	Sb(MatrixXd::Zero(M.cols(), M.cols())), Sw(MatrixXd::Zero(M.cols(), M.cols()))
 {
@@ -33,8 +33,8 @@ mhorvath::LDA::LDA(const MatrixXd &M, const vector<string> &class_vec)
 	VectorXd evals(n); // Unordered eigenvalues
 	double evalues_sum(0.0); // Sum of eigenvalues (Used to compute proportional explained variance)
 
-	// Subtract the mean
-	this->DataAdjust = M.rowwise() - this->DataMean;
+	//// Subtract the mean
+	//this->DataAdjust = M.rowwise() - this->DataMean;
 
 	// Check number of classes
 	for (unsigned int i = 0; i < m; i++) {
@@ -86,8 +86,8 @@ mhorvath::LDA::LDA(const MatrixXd &M, const vector<string> &class_vec)
 	// Compute Sb matrix
 	it_class = classes.begin();
 	for (unsigned int i = 0; i < g; i++, it_class++) {
-		//RowVectorXd temp = this->ClassMean[i] - this->DataMean;
-		RowVectorXd temp = this->ClassMean[i];
+		RowVectorXd temp = this->ClassMean[i] - this->DataMean;
+		//RowVectorXd temp = this->ClassMean[i];
 		Sb += MatrixXd((temp.transpose() * temp).array() * it_class->second);
 	}
 
@@ -161,11 +161,11 @@ MatrixXd mhorvath::LDA::rebuild(const MatrixXd &A)
 	//return (temp.transpose().inverse().block(0, 0, temp.rows(), A.cols()) *
 	//	A.transpose()).transpose();
 
-	//return (this->EigenVectors.transpose().inverse().block(0, 0, this->EigenVectors.rows(), A.cols()) *
-	//	A.transpose()).transpose();
-
 	return (this->EigenVectors.transpose().inverse().block(0, 0, this->EigenVectors.rows(), A.cols()) *
-		A.transpose()).transpose().rowwise() + this->DataMean;
+		A.transpose()).transpose();
+
+	//return (this->EigenVectors.transpose().inverse().block(0, 0, this->EigenVectors.rows(), A.cols()) *
+	//	A.transpose()).transpose().rowwise() + this->DataMean;
 }
 
 MatrixXd mhorvath::LDA::getSb()

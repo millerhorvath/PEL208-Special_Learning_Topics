@@ -85,7 +85,27 @@ void mhorvath::runPCAExperimentEx(const MatrixXd &D, const char * const f_label 
 	fclose(f);
 
 	cout << f_name << endl;
-	
+
+
+	for (int i = 0; i < D.cols(); i++) {
+		sprintf(f_name, "%s_reduction_comp_%d.csv", f_label, i + 1);
+		out_file = filesystem::current_path() / out_path / f_name;
+
+		f = fopen(out_file.string().c_str(), "w");
+
+		for (int l = 0; l < reduction_D[i].rows(); l++) {
+			fprintf(f, "%f", reduction_D[i](l, 0));
+			for (int c = 1; c < reduction_D[i].cols(); c++) {
+				fprintf(f, ",%f", reduction_D[i](l, c));
+			}
+			fprintf(f, "\n");
+		}
+
+		fclose(f);
+		cout << f_name << endl;
+	}
+	cout << endl;
+
 
 	for (int i = 0; i < D.cols(); i++) {
 		sprintf(f_name, "%s_rebuilt_comp_%d.csv", f_label, i + 1);
@@ -252,6 +272,8 @@ void mhorvath::runLDAExperiment(const MatrixXd &X, const vector<string> &classes
 		filesystem::create_directory(out_path); // Create output path
 	}
 
+	cout << "######### " << f_label << " - LDA EXPERIMENT ########## " << endl << endl;
+
 	mhorvath::LDA lda(X, classes);
 
 	cout << "Data =" << endl << X.block(0, 0, p_m, p_n) << endl << endl;
@@ -270,6 +292,8 @@ void mhorvath::runLDAExperiment(const MatrixXd &X, const vector<string> &classes
 	// Compute dimensionality reduction
 	for (int i = 0; i < X.cols(); i++) {
 		reduction_D[i] = lda.transform(i + 1);
+
+		//cout << "Reduction " << i+1 << "=" << endl << reduction_D[i] << endl << endl;
 	}
 
 	// Vector of matrices to store rebuilt data using from 1 to n principal components
@@ -278,6 +302,8 @@ void mhorvath::runLDAExperiment(const MatrixXd &X, const vector<string> &classes
 	// Compute data rebuilding
 	for (unsigned int i = 0; i < n; i++) {
 		rebuilt_D[i] = lda.rebuild(reduction_D[i]);
+
+		//cout << "Rebuild " << i + 1 << "=" << endl << rebuilt_D[i] << endl << endl;
 	}
 	
 	// Write all results in file
@@ -302,6 +328,25 @@ void mhorvath::runLDAExperiment(const MatrixXd &X, const vector<string> &classes
 	cout << f_name << endl;
 
 	for (unsigned int i = 0; i < n; i++) {
+		sprintf(f_name, "%s_reduction_lda_%d.csv", f_label, i + 1);
+		out_file = filesystem::current_path() / out_path / f_name;
+
+		f = fopen(out_file.string().c_str(), "w");
+
+		for (int l = 0; l < reduction_D[i].rows(); l++) {
+			//fprintf(f, "%f", reduction_D[i](l, 0));
+			for (int c = 0; c < reduction_D[i].cols(); c++) {
+				fprintf(f, "%f,", reduction_D[i](l, c));
+			}
+			fprintf(f, "%s\n", classes[l].c_str());
+		}
+
+		fclose(f);
+		cout << f_name << endl;
+	}
+	cout << endl;
+
+	for (unsigned int i = 0; i < n; i++) {
 		sprintf(f_name, "%s_rebuilt_lda_%d.csv", f_label, i + 1);
 		out_file = filesystem::current_path() / out_path / f_name;
 
@@ -318,6 +363,75 @@ void mhorvath::runLDAExperiment(const MatrixXd &X, const vector<string> &classes
 		fclose(f);
 		cout << f_name << endl;
 	}
+	cout << endl;
+
+	system("PAUSE");
+	system("CLS");
+}
+
+void mhorvath::runPCA_LDAExperiment(const MatrixXd &X, const vector<string> &classes, const char * const f_label = "", const char * const out_path = "")
+{
+	unsigned const int n((unsigned int)X.cols()); // Number of features
+	unsigned const int m((unsigned int)X.rows()); // Number of observations
+	unsigned const int p_m((unsigned int)std::min((unsigned int)10, m)); // Limit of lines to print
+	unsigned int p_n((unsigned int)std::min((unsigned int)10, n)); // Limit of lines to print
+	FILE *f; // File used
+	filesystem::path out_file; // Used to build output path
+	char f_name[256]; // Used to build output file name
+	MatrixXd reduction_pca(X.rows(), 2);
+	MatrixXd reduction_lda(X.rows(), 2);
+
+	if (strcmp(out_path, "")) {
+		cout << filesystem::create_directory(out_path); // Create output path
+	}
+
+	cout << "######### " << f_label << " - PCA+LDA EXPERIMENT ########## " << endl << endl;
+
+	mhorvath::PCA pca(X); // Compute PCA
+	reduction_pca = pca.transform(3);
+
+	cout << "Data =" << endl << X.block(0, 0, p_m, p_n) << endl << endl;
+	cout << "Data Mean =" << endl << pca.getOriginalMean().segment(0, p_n) << endl << endl;
+	cout << "DataAdjust =" << endl << pca.getDataAdjust().block(0, 0, p_m, p_n) << endl << endl;
+	cout << "Covariance =" << endl << pca.covariance().block(0, 0, p_n, p_n) << endl << endl;
+	cout << "Eigenvalues =" << endl << pca.values().segment(0, p_n) << endl << endl;
+	cout << "Eigenvectors =" << endl << pca.components().block(0, 0, p_n, p_n) << endl << endl;
+	cout << "Explained Variance =" << endl << pca.explained_variace_ratio().segment(0, p_n) << endl << endl;
+	cout << "Sum of Explained Variance =" << endl << pca.explained_variace_ratio().sum() << endl << endl;
+
+	mhorvath::LDA lda(reduction_pca, classes);
+
+	p_n = 2;
+	reduction_lda = lda.transform(p_n);
+
+	cout << "Data =" << endl << reduction_pca.block(0, 0, p_m, p_n) << endl << endl;
+	cout << "Sb =" << endl << lda.getSb() << endl << endl;
+	cout << "Sw =" << endl << lda.getSw() << endl << endl;
+	cout << "Data Mean =" << endl << lda.data_mean() << endl << endl;
+	cout << "Classes Mean =" << endl << lda.classes_mean() << endl << endl;
+	cout << "Eigenvalues =" << endl << lda.values().segment(0, p_n) << endl << endl;
+	cout << "Eigenvectors =" << endl << lda.components().block(0, 0, p_n, p_n) << endl << endl;
+	cout << "Explained Variance =" << endl << lda.explained_variace_ratio().segment(0, p_n) << endl << endl;
+	cout << "Sum of Explained Variance =" << endl << lda.explained_variace_ratio().sum() << endl << endl;
+
+	cout << "GENERATED FILES: " << endl;
+
+	sprintf(f_name, "%s_pca_lda.csv", f_label);
+	out_file = filesystem::current_path() / out_path / f_name;
+
+	f = fopen(out_file.string().c_str(), "w");
+
+	for (int l = 0; l < reduction_lda.rows(); l++) {
+		fprintf(f, "%f", reduction_lda(l, 0));
+		for (int c = 1; c < reduction_lda.cols(); c++) {
+			fprintf(f, ",%f", reduction_lda(l, c));
+		}
+		fprintf(f, "\n");
+	}
+
+	fclose(f);
+	cout << f_name << endl;
+	
 	cout << endl;
 
 	system("PAUSE");
@@ -547,7 +661,9 @@ void mhorvath::iris()
 
 	fclose(f); // Close file
 
-	mhorvath::runLDAExperiment(D, classes, ex_label, output_folder);
+	//mhorvath::runLDAExperiment(D, classes, ex_label, output_folder);
+	//mhorvath::runPCAExperimentEx(D, ex_label, output_folder);
+	mhorvath::runPCA_LDAExperiment(D, classes, ex_label, output_folder);
 }
 
 void mhorvath::inClassExampleLDA()
