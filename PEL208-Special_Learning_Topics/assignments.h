@@ -23,5 +23,7 @@ namespace mhorvath {
 
 	void iris();
 
+	void inClassExampleKMeans();
+
 	void inClassExampleLDA();
 }

@@ -306,7 +306,7 @@ void mhorvath::runLDAExperiment(const MatrixXd &X, const vector<string> &classes
 
 		//cout << "Rebuild " << i + 1 << "=" << endl << rebuilt_D[i] << endl << endl;
 	}
-	
+
 	// Write all results in file
 	sprintf(f_name, "%s_lda_vectors.csv", f_label); // Build output file name
 
@@ -432,7 +432,7 @@ void mhorvath::runPCA_LDAExperiment(const MatrixXd &X, const vector<string> &cla
 
 	fclose(f);
 	cout << f_name << endl;
-	
+
 	cout << endl;
 
 	system("PAUSE");
@@ -441,14 +441,15 @@ void mhorvath::runPCA_LDAExperiment(const MatrixXd &X, const vector<string> &cla
 
 void mhorvath::runKMeans_Experiment(const MatrixXd &X, const char * const f_label = "", const char * const out_path = "")
 {
-	unsigned const int n((unsigned int)X.cols()); // Number of features
-	unsigned const int m((unsigned int)X.rows()); // Number of observations
-	unsigned const int p_m((unsigned int)std::min((unsigned int)10, m)); // Limit of lines to print
-	unsigned const int p_n((unsigned int)std::min((unsigned int)10, n)); // Limit of lines to print
-	
-	//FILE *f; // File used
+	const unsigned int n((unsigned int)X.cols()); // Number of features
+	const unsigned int m((unsigned int)X.rows()); // Number of observations
+	const unsigned int p_m((unsigned int)std::min((unsigned int)10, m)); // Limit of lines to print
+	const unsigned int p_n((unsigned int)std::min((unsigned int)10, n)); // Limit of lines to print
+	const unsigned int k(3); // Number of clusters
+
+	FILE *f; // File used
 	filesystem::path out_file; // Used to build output path
-	//char f_name[256]; // Used to build output file name
+	char f_name[256]; // Used to build output file name
 
 	if (strcmp(out_path, "")) {
 		filesystem::create_directory(out_path); // Create output path
@@ -456,7 +457,66 @@ void mhorvath::runKMeans_Experiment(const MatrixXd &X, const char * const f_labe
 
 	cout << "######### " << f_label << " - LDA EXPERIMENT ########## " << endl << endl;
 
+	// Compute kmeans
 	mhorvath::KMeans kmeans(X, 3);
+
+	// Get centroids
+	vector<RowVectorXd> centroids(kmeans.getCentroids());
+
+	cout << "X =" << endl << X.block(0, 0, p_m, p_n) << endl << endl;
+
+	// Print centroids
+	cout << "Centroids:" << endl;
+
+	for (unsigned int i = 0; i < centroids.size(); i++) {
+		cout << centroids[i] << endl;
+	}
+	cout << endl;
+
+	vector<unsigned int> classes(kmeans.classifyMatrix(X));
+
+	// Print predicted classes
+	cout << "Classifications (id-class)" << endl;
+
+	for (unsigned int i = 0; i < classes.size(); i++) {
+		printf("%d-%d ", i, classes[i]);
+	}
+	cout << endl << endl;
+
+	cout << "GENERATED FILES: " << endl;
+
+	sprintf(f_name, "%s_kmeans_centroids.csv", f_label);
+	out_file = filesystem::current_path() / out_path / f_name;
+
+	f = fopen(out_file.string().c_str(), "w");
+
+	for (unsigned int i = 0; i < k; i++) {
+		fprintf(f, "%lf", centroids[i][0]);
+		for (unsigned int j = 1; j < n; j++) {
+			fprintf(f, ",%lf", centroids[i][j]);
+		}
+		fprintf(f, "\n");
+	}
+
+	fclose(f);
+	cout << f_name << endl;
+
+	sprintf(f_name, "%s_kmeans_classes.csv", f_label);
+	out_file = filesystem::current_path() / out_path / f_name;
+
+	f = fopen(out_file.string().c_str(), "w");
+
+	for (unsigned int i = 0; i < m; i++) {
+		fprintf(f, "%d\n", classes[i]);
+	}
+
+	fclose(f);
+	cout << f_name << endl;
+
+	cout << endl;
+
+	system("PAUSE");
+	system("CLS");
 }
 
 void mhorvath::inClassExample()
@@ -520,7 +580,7 @@ void mhorvath::alpsWater()
 	}
 
 	fclose(f); // Close file
-	
+
 	// Initialize first column of feature matrix with 1
 	X.col(0) = VectorXd::Zero(m).array() + 1.0;
 
@@ -677,6 +737,37 @@ void mhorvath::iris()
 	// Read line-by-line
 	for (int i = 0; i < m; i++) {
 		fscanf(f, "%lf,%lf,%lf,%lf,%s\n", &D(i, 0), &D(i, 1), &D(i, 2), &D(i, 3), &data);
+		classes[i] = data;
+	}
+
+	fclose(f); // Close file
+
+	//mhorvath::runLDAExperiment(D, classes, ex_label, output_folder);
+	//mhorvath::runPCAExperimentEx(D, ex_label, output_folder);
+	//mhorvath::runPCA_LDAExperiment(D, classes, ex_label, output_folder);
+	mhorvath::runKMeans_Experiment(D, ex_label, output_folder);
+}
+
+void mhorvath::inClassExampleKMeans()
+{
+	// In class example: Some Data
+	const unsigned int n(2); // Number of features
+	const unsigned int m(17); // Number of observations
+	const unsigned int p_n(min(n, (unsigned int)10)); // Number of features
+	const unsigned int p_m(min(m, (unsigned int)10)); // Number of observations
+	MatrixXd D(m, n); // Data matrix
+	vector<string> classes(m); // Least squares target variable
+	const char * const ex_label = "inClassExample"; // Experiment label
+	const char * const output_folder = "kmeans_data"; // Output folder
+	FILE * f; // Used to read dataset file
+	char data[128]; // Used to read class variable
+
+	// Read dataset from file
+	f = fopen("inClassExample_KMeans.txt", "r");
+
+	// Read line-by-line
+	for (int i = 0; i < m; i++) {
+		fscanf(f, "%lf,%lf\n", &D(i, 0), &D(i, 1));
 		classes[i] = data;
 	}
 

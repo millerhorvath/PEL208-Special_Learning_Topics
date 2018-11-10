@@ -43,15 +43,20 @@ mhorvath::KMeans::KMeans(const MatrixXd &X, const unsigned int &k, const unsigne
 		if (temp.find(idx) == temp.end()) {
 			temp.insert(idx);
 			centroids[i] = X.row(idx);
+
+			cout << idx << endl;
 		}
 		else {
 			i--;
 		}
 	}
+	cout << endl;
 	temp.clear();
 
 	vector<RowVectorXd> old_centroids; // Used to check if the centroids changed after the iteration
 	vector<unsigned int> clusters(X.rows()); // Stores the observation cluster at each iteration
+
+	unsigned int it_count = 0;
 
 	// Update centroids until they converge
 	do {
@@ -61,7 +66,7 @@ mhorvath::KMeans::KMeans(const MatrixXd &X, const unsigned int &k, const unsigne
 
 		// Classify observations using the actual centroids
 		for (unsigned int i = 0; i < X.rows(); i++) {
-			clusters[i] = this->classify(X.row(i));
+			clusters[i] = this->classifyVector(X.row(i));
 			clusters_size[clusters[i]]++;
 		}
 
@@ -86,11 +91,16 @@ mhorvath::KMeans::KMeans(const MatrixXd &X, const unsigned int &k, const unsigne
 		//cout << endl;
 
 		//system("pause");
+		
+		it_count++;
+	} while (!(compCentroids(centroids, old_centroids) || it_count == max_i));
 
-	} while (!compCentroids(centroids, old_centroids));
+	if (it_count == max_i) {
+		cout << "KMeans did not converge after " << max_i << " iterations!" << endl << endl;
+	}
 }
 
-unsigned int mhorvath::KMeans::classify(const RowVectorXd &X)
+unsigned int mhorvath::KMeans::classifyVector(const RowVectorXd &X)
 {
 	//double closest_dist = euclideanDist(X, this->centroids[0]);
 	double closest_dist = manhattanDist(X, this->centroids[0]);
@@ -107,4 +117,20 @@ unsigned int mhorvath::KMeans::classify(const RowVectorXd &X)
 	}
 
 	return closest_id;
+}
+
+vector<unsigned int> mhorvath::KMeans::classifyMatrix(const Eigen::MatrixXd &X)
+{
+	vector<unsigned int> classes(X.rows());
+
+	for (unsigned int i = 0; i < X.rows(); i++) {
+		classes[i] = this->classifyVector(X.row(i));
+	}
+	
+	return classes;
+}
+
+std::vector<Eigen::RowVectorXd> mhorvath::KMeans::getCentroids()
+{
+	return this->centroids;
 }

@@ -6,11 +6,11 @@ using namespace std;
 using namespace Eigen;
 
 int main() {
-	//mhorvath::inClassExampleLDA();
+	mhorvath::inClassExampleKMeans();
 	mhorvath::iris();
 	
 
 
-	system("PAUSE");
+	//system("PAUSE");
 	return 0;
 }

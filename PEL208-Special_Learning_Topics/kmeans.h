@@ -11,6 +11,9 @@ namespace mhorvath {
 	public:
 		KMeans(const Eigen::MatrixXd &, const unsigned int &, const unsigned int &max_i = 100);
 
-		unsigned int classify(const Eigen::RowVectorXd &);
+		unsigned int classifyVector(const Eigen::RowVectorXd &);
+		std::vector<unsigned int> classifyMatrix(const Eigen::MatrixXd &);
+
+		std::vector<Eigen::RowVectorXd> getCentroids();
 	};
 }
