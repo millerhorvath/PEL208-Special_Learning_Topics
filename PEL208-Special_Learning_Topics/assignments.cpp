@@ -2,6 +2,7 @@
 #include "pca.h"
 #include "least_squares.h"
 #include "lda.h"
+#include "kmeans.h"
 #include <iostream>
 #include <cstdio>
 #include <filesystem>
@@ -399,7 +400,7 @@ void mhorvath::runPCA_LDAExperiment(const MatrixXd &X, const vector<string> &cla
 	cout << "Explained Variance =" << endl << pca.explained_variace_ratio().segment(0, p_n) << endl << endl;
 	cout << "Sum of Explained Variance =" << endl << pca.explained_variace_ratio().sum() << endl << endl;
 
-	mhorvath::LDA lda(reduction_pca, classes);
+	mhorvath::LDA lda(reduction_pca, classes); // Compute LDA
 
 	p_n = 2;
 	reduction_lda = lda.transform(p_n);
@@ -436,6 +437,26 @@ void mhorvath::runPCA_LDAExperiment(const MatrixXd &X, const vector<string> &cla
 
 	system("PAUSE");
 	system("CLS");
+}
+
+void mhorvath::runKMeans_Experiment(const MatrixXd &X, const char * const f_label = "", const char * const out_path = "")
+{
+	unsigned const int n((unsigned int)X.cols()); // Number of features
+	unsigned const int m((unsigned int)X.rows()); // Number of observations
+	unsigned const int p_m((unsigned int)std::min((unsigned int)10, m)); // Limit of lines to print
+	unsigned const int p_n((unsigned int)std::min((unsigned int)10, n)); // Limit of lines to print
+	
+	//FILE *f; // File used
+	filesystem::path out_file; // Used to build output path
+	//char f_name[256]; // Used to build output file name
+
+	if (strcmp(out_path, "")) {
+		filesystem::create_directory(out_path); // Create output path
+	}
+
+	cout << "######### " << f_label << " - LDA EXPERIMENT ########## " << endl << endl;
+
+	mhorvath::KMeans kmeans(X, 3);
 }
 
 void mhorvath::inClassExample()
@@ -646,7 +667,7 @@ void mhorvath::iris()
 	MatrixXd D(m, n); // Data matrix
 	vector<string> classes(m); // Least squares target variable
 	const char * const ex_label = "iris"; // Experiment label
-	const char * const output_folder = "lda_data"; // Output folder
+	const char * const output_folder = "kmeans_data"; // Output folder
 	FILE * f; // Used to read dataset file
 	char data[128]; // Used to read class variable
 
@@ -663,7 +684,8 @@ void mhorvath::iris()
 
 	//mhorvath::runLDAExperiment(D, classes, ex_label, output_folder);
 	//mhorvath::runPCAExperimentEx(D, ex_label, output_folder);
-	mhorvath::runPCA_LDAExperiment(D, classes, ex_label, output_folder);
+	//mhorvath::runPCA_LDAExperiment(D, classes, ex_label, output_folder);
+	mhorvath::runKMeans_Experiment(D, ex_label, output_folder);
 }
 
 void mhorvath::inClassExampleLDA()
