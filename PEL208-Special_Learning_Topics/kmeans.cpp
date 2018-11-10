@@ -8,6 +8,14 @@ using namespace Eigen;
 
 typedef vector<RowVectorXd>::iterator c_it;
 
+double euclideanDist(const RowVectorXd &A, const RowVectorXd &B) {
+	return (A - B) * (A - B).transpose();
+}
+
+double manhattanDist(const RowVectorXd &A, const RowVectorXd &B) {
+	return (A - B).cwiseAbs().sum();
+}
+
 bool compCentroids(const vector<RowVectorXd> &A, const vector<RowVectorXd> &B) {
 	bool ret = true;
 
@@ -21,11 +29,11 @@ bool compCentroids(const vector<RowVectorXd> &A, const vector<RowVectorXd> &B) {
 }
 
 mhorvath::KMeans::KMeans(const MatrixXd &X, const unsigned int &k, const unsigned int &max_i)
+	: k(k)
 {
 	srand(static_cast<unsigned int>(time(0)));
 	this->centroids.resize(k);
 	set<unsigned int> temp;
-	set<unsigned int>::iterator it_temp;
 
 	// Loop to randomly pick k points of X as initial centroids
 	for (unsigned int i = 0; i < k; i++) {
@@ -35,20 +43,68 @@ mhorvath::KMeans::KMeans(const MatrixXd &X, const unsigned int &k, const unsigne
 		if (temp.find(idx) == temp.end()) {
 			temp.insert(idx);
 			centroids[i] = X.row(idx);
-			cout << idx << " ";
 		}
 		else {
 			i--;
 		}
 	}
+	temp.clear();
 
-	cout << endl;
+	vector<RowVectorXd> old_centroids; // Used to check if the centroids changed after the iteration
+	vector<unsigned int> clusters(X.rows()); // Stores the observation cluster at each iteration
 
-	for (c_it it = this->centroids.begin(); it != this->centroids.end(); it++) {
-		cout << *it << endl << endl;
+	// Update centroids until they converge
+	do {
+		old_centroids.clear();
+		old_centroids.assign(this->centroids.begin(), this->centroids.end());
+		vector<unsigned int> clusters_size(k, 0); // Stores the number of observation in each cluster
+
+		// Classify observations using the actual centroids
+		for (unsigned int i = 0; i < X.rows(); i++) {
+			clusters[i] = this->classify(X.row(i));
+			clusters_size[clusters[i]]++;
+		}
+
+		// Reset centroids
+		for (unsigned int i = 0; i < k; i++) {
+			this->centroids[i] = RowVectorXd::Zero(X.cols());
+		}
+
+		// Update Centroids based on the clusters
+		for (unsigned int i = 0; i < X.rows(); i++) {
+			centroids[clusters[i]] += X.row(i);
+		}
+
+		for (unsigned int i = 0; i < k; i++) {
+			this->centroids[i] /= clusters_size[i];
+		}
+
+		//// Print centroid update
+		//for (unsigned int i = 0; i < k; i++) {
+		//	cout << old_centroids[i] << endl << this->centroids[i] << endl;
+		//}
+		//cout << endl;
+
+		//system("pause");
+
+	} while (!compCentroids(centroids, old_centroids));
+}
+
+unsigned int mhorvath::KMeans::classify(const RowVectorXd &X)
+{
+	//double closest_dist = euclideanDist(X, this->centroids[0]);
+	double closest_dist = manhattanDist(X, this->centroids[0]);
+	unsigned int closest_id = 0;
+
+	for (unsigned int i = 1; i < this->k; i++) {
+		//const double temp_dist(euclideanDist(X, this->centroids[i]));
+		const double temp_dist(manhattanDist(X, this->centroids[i]));
+
+		if (temp_dist < closest_dist) {
+			closest_dist = temp_dist;
+			closest_id = i;
+		}
 	}
 
-	//do {
-	//	vector<RowVectorXd> old_centroids(centroids);
-	//} while (!compCentroids(centroids, old_centroids));
+	return closest_id;
 }
