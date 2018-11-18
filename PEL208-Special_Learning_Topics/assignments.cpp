@@ -818,7 +818,7 @@ void mhorvath::iris()
 	//char data[128]; // Used to read class variable
 
 	// Read dataset from file
-	f = fopen("iris.txt", "r");
+	f = fopen("iris_FORMATED.txt", "r");
 
 	// Read line-by-line
 	for (int i = 0; i < m; i++) {
