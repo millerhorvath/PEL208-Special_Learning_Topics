@@ -3,6 +3,32 @@ import pandas as pd
 from pandas import DataFrame
 
 
+def build_pred_json(data_frame):
+    """
+
+    :type data_frame: pd.DataFrame
+    :param data_frame:
+    :param target_feature:
+    :return:
+    """
+    # if target_feature in data_frame.axes[1]:
+    #     # _pred_dict = {'Target': target_feature, 'Event': None, 'Features': []}
+    #     pass
+    # else:
+    #     raise Exception('Invalid target_value')
+
+    _pred_list = []
+
+    for idx in data_frame.axes[0]:
+        _feature_dict = {}
+        for feature in data_frame.axes[1]:
+            if isinstance(data_frame.iloc[idx][feature], str) or not np.isnan(data_frame.iloc[idx][feature]):
+                _feature_dict[feature] = data_frame.iloc[idx][feature]
+        _pred_list.append(_feature_dict)
+
+    return _pred_list
+
+
 class NaiveBayes:
     def __init__(self, data_frame=None, target_feature=None):
         """
@@ -14,9 +40,10 @@ class NaiveBayes:
         """
         self.indP = None  # Individual categorical events probability
         self.condP = None  # Conditional probability of events related with the target feature
+        self.mean = None  # Mean of numeric features
+        self.sd = None  # Standard-deviation of numeric features
         self.df = data_frame  # Original DataFrame
         self.target = target_feature  # Target feature
-        self.fitted = False  # Flag to control whether the model was trained
 
         if self.df is not None and self.target is not None:
             self.compute_probabilities()
@@ -49,9 +76,22 @@ class NaiveBayes:
                 P[-1][t_value] = self.indP[self.target, t_value]
                 for k in f.keys():
                     if k != self.target:
-                        P[-1][t_value] *= self.condP[k, f[k], t_value]
+                        if self.df[k].dtype.name == 'category':
+                            P[-1][t_value] *= self.condP[k, f[k], t_value]
+                        else:
+                            P[-1][t_value] *= self.gauss_probability(
+                                x=f[k],
+                                mean=self.mean[t_value][k],
+                                std=self.sd[t_value][k]
+                            )
 
         return P
+
+    @staticmethod
+    def gauss_probability(x, mean, std):
+        # print(x, mean, std, (2 * std * std))
+        temp = x - mean
+        return 1 / (std * np.sqrt(2.0 * np.pi)) * np.exp(-temp * temp / (2 * std * std))
 
     def fit(self, data_frame, target_feature):
         """
@@ -61,7 +101,6 @@ class NaiveBayes:
         :type target_feature: str
         :param target_feature:
         """
-        self.fitted = False
         self.df = data_frame
         self.target = target_feature
 
@@ -80,6 +119,8 @@ class NaiveBayes:
         # Initialize probability dicts
         self.indP = {}
         self.condP = {}
+        self.mean = {}
+        self.sd = {}
 
         # Cast object columns into categorical features
         for k in self.df.keys():
@@ -90,7 +131,7 @@ class NaiveBayes:
 
         # Compute individual events probability
         for feature in self.df.axes[1]:
-            if self.df[feature].dtype == 'category':
+            if self.df[feature].dtype.name == 'category':
                 for event in self.df[feature].cat.categories:
                     self.indP[feature, event] = len(self.df[self.df[feature] == event]) / n
 
@@ -100,17 +141,16 @@ class NaiveBayes:
         # Compute conditional probabilities
         for target, data in grouped:
             n = len(data)  # Number of observations for each target feature event
+            self.mean[target] = {}
+            self.sd[target] = {}
 
             for feature in data.keys():
                 # Only computes for categorical features
                 if feature != self.target:
-                    # Iterate for all feature events
-                    for event in data[feature].cat.categories:
-                        # cond_prob_dict['Feature'].append(feature)
-                        # cond_prob_dict['Value'].append(event)
-                        # cond_prob_dict['Target'].append(target)
-                        # p = len(data[data[feature] == event]) / n
-                        # cond_prob_dict['P'].append(p)
-                        self.condP[feature, event, target] = len(data[data[feature] == event]) / n
-
-        self.fitted = True
+                    if data[feature].dtype.name == 'category':
+                        # Iterate for all feature events
+                        for event in data[feature].cat.categories:
+                            self.condP[feature, event, target] = len(data[data[feature] == event]) / n
+                    else:
+                        self.mean[target][feature] = data[feature].mean()
+                        self.sd[target][feature] = data[feature].std()

@@ -1,13 +1,14 @@
 import Python_Assignments.NaiveBayes as naive
 import pandas as pd
 
-df = pd.read_csv('playTennis.txt', index_col=0)
+df = pd.read_csv('gaussianExample.txt')
+target_feature = 'PlayTennis'
 
-n_bayes = naive.NaiveBayes(df, 'PlayTennis')
+n_bayes = naive.NaiveBayes(df, target_feature)
 
 # n_bayes.print_probabilities()
 
-pred_df = pd.read_csv('pred_playTennis.txt')
+pred_df = pd.read_csv('pred_gaussianExample.txt')
 
 pred_list = naive.build_pred_json(data_frame=pred_df)
 
@@ -19,4 +20,6 @@ for i in range(len(pred_p)):
     print(pred_df.iloc[i].to_dict())
     for k in pred_p[i]:
         print(k, pred_p[i][k])
+    print('Observed Event:', df.iloc[i][target_feature])
     print('Predicted Event:', pred_event[i])
+    print('')
