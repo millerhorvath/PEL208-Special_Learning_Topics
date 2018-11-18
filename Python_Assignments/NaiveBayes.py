@@ -23,6 +23,36 @@ class NaiveBayes:
         else:
             print("WARNING: Can't fit Naive Bayes model without the DataFrame and the target_value.")
 
+    def predict(self, features):
+        p_list = self.predict_probabilities(features)
+        event_list = []
+
+        for d in p_list:
+            event_list.append(max(d, key=d.get))
+
+        return event_list
+
+    def predict_probabilities(self, features):
+        """
+
+        :type features: list(dtype=dict)
+        :param features: list of dicts. Each list element is a dict that has the feature events conditions
+
+        :rtype: list(dtype=np.float)
+        :return:
+        """
+        P = list()
+
+        for f in features:
+            P.append({})
+            for t_value in self.df[self.target].cat.categories:
+                P[-1][t_value] = self.indP[self.target, t_value]
+                for k in f.keys():
+                    if k != self.target:
+                        P[-1][t_value] *= self.condP[k, f[k], t_value]
+
+        return P
+
     def fit(self, data_frame, target_feature):
         """
 
