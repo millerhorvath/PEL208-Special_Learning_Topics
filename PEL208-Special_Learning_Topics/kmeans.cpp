@@ -43,14 +43,12 @@ mhorvath::KMeans::KMeans(const MatrixXd &X, const unsigned int &k, const unsigne
 		if (temp.find(idx) == temp.end()) {
 			temp.insert(idx);
 			centroids[i] = X.row(idx);
-
-			cout << idx << endl;
 		}
 		else {
 			i--;
 		}
 	}
-	cout << endl;
+	//cout << endl;
 	temp.clear();
 
 	vector<RowVectorXd> old_centroids; // Used to check if the centroids changed after the iteration
@@ -100,7 +98,15 @@ mhorvath::KMeans::KMeans(const MatrixXd &X, const unsigned int &k, const unsigne
 	}
 }
 
-unsigned int mhorvath::KMeans::classifyVector(const RowVectorXd &X)
+mhorvath::KMeans mhorvath::KMeans::operator=(const KMeans &K)
+{
+	this->centroids = K.centroids;
+	this->k = K.k;
+
+	return *this;
+}
+
+unsigned int mhorvath::KMeans::classifyVector(const RowVectorXd &X) const
 {
 	//double closest_dist = euclideanDist(X, this->centroids[0]);
 	double closest_dist = manhattanDist(X, this->centroids[0]);
@@ -119,7 +125,7 @@ unsigned int mhorvath::KMeans::classifyVector(const RowVectorXd &X)
 	return closest_id;
 }
 
-vector<unsigned int> mhorvath::KMeans::classifyMatrix(const Eigen::MatrixXd &X)
+vector<unsigned int> mhorvath::KMeans::classifyMatrix(const Eigen::MatrixXd &X) const
 {
 	vector<unsigned int> classes(X.rows());
 
@@ -130,7 +136,17 @@ vector<unsigned int> mhorvath::KMeans::classifyMatrix(const Eigen::MatrixXd &X)
 	return classes;
 }
 
-std::vector<Eigen::RowVectorXd> mhorvath::KMeans::getCentroids()
+std::vector<Eigen::RowVectorXd> mhorvath::KMeans::getCentroids() const
 {
 	return this->centroids;
+}
+
+RowVectorXd mhorvath::KMeans::getCentroids(const unsigned int &i) const
+{
+	return this->centroids[i];
+}
+
+unsigned int mhorvath::KMeans::getK() const
+{
+	return this->k;
 }

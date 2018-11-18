@@ -8,6 +8,8 @@ using namespace Eigen;
 int main() {
 	mhorvath::inClassExampleKMeans();
 	mhorvath::iris();
+	mhorvath::seedsUCI();
+	mhorvath::winesUCI();
 	
 
 

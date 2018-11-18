@@ -10,10 +10,13 @@ namespace mhorvath {
 		KMeans();
 	public:
 		KMeans(const Eigen::MatrixXd &, const unsigned int &, const unsigned int &max_i = 100);
+		KMeans operator=(const KMeans &);
 
-		unsigned int classifyVector(const Eigen::RowVectorXd &);
-		std::vector<unsigned int> classifyMatrix(const Eigen::MatrixXd &);
+		unsigned int classifyVector(const Eigen::RowVectorXd &) const;
+		std::vector<unsigned int> classifyMatrix(const Eigen::MatrixXd &) const;
 
-		std::vector<Eigen::RowVectorXd> getCentroids();
+		std::vector<Eigen::RowVectorXd> getCentroids() const;
+		Eigen::RowVectorXd getCentroids(const unsigned int &) const;
+		unsigned int getK() const;
 	};
 }
