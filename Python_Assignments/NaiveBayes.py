@@ -91,8 +91,6 @@ class NaiveBayes:
     def gauss_probability(x, mean, std):
         # print(x, mean, std, (2 * std * std))
         temp = x - mean
-        if 1 / (std * np.sqrt(2.0 * np.pi)) * np.exp(-temp * temp / (2 * std * std)) > 1.0:
-            print(1 / (std * np.sqrt(2.0 * np.pi)) * np.exp(-temp * temp / (2 * std * std)))
         return 1 / (std * np.sqrt(2.0 * np.pi)) * np.exp(-temp * temp / (2 * std * std))
 
     def fit(self, data_frame, target_feature):
