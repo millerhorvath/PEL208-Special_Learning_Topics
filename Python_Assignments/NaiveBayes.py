@@ -1,6 +1,5 @@
 import numpy as np
 import pandas as pd
-from pandas import DataFrame
 
 
 def build_pred_json(data_frame):
@@ -8,15 +7,8 @@ def build_pred_json(data_frame):
 
     :type data_frame: pd.DataFrame
     :param data_frame:
-    :param target_feature:
     :return:
     """
-    # if target_feature in data_frame.axes[1]:
-    #     # _pred_dict = {'Target': target_feature, 'Event': None, 'Features': []}
-    #     pass
-    # else:
-    #     raise Exception('Invalid target_value')
-
     _pred_list = []
 
     for idx in data_frame.axes[0]:

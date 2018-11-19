@@ -5,7 +5,7 @@ df = pd.read_csv('ex1.txt', index_col=0)
 
 n_bayes = naive.NaiveBayes(df, 'phone')
 
-# n_bayes.print_probabilities()
+n_bayes.print_probabilities()
 
 pred_df = pd.read_csv('pred_ex1.txt')
 
