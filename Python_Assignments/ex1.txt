@@ -1,0 +1,11 @@
+name,laptop,phone
+Kate,PC,Android
+Tom,PC,Android
+Harry,PC,Android
+Annika,Mac,iPhone
+Naomi,Mac,Android
+Joe,Mac,iPhone
+Chakotay,Mac,iPhone
+Neelix,Mac,Android
+Kes,PC,iPhone
+B'Elanna,Mac,iPhone
