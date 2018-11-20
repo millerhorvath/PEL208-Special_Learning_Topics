@@ -1,13 +1,13 @@
-import Python_Assignments.NaiveBayes as naive
+import NaiveBayes as naive
 import pandas as pd
 
-df = pd.read_csv('playTennis.txt', index_col=0)
+df = pd.read_csv('ex1.txt', index_col=0)
 
-n_bayes = naive.NaiveBayes(df, 'PlayTennis')
+n_bayes = naive.NaiveBayes(df, 'phone')
 
-# n_bayes.print_probabilities()
+n_bayes.print_probabilities()
 
-pred_df = pd.read_csv('pred_playTennis.txt')
+pred_df = pd.read_csv('pred_ex1.txt')
 
 pred_list = naive.build_pred_json(data_frame=pred_df)
 

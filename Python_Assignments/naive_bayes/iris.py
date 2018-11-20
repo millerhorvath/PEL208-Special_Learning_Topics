@@ -1,7 +1,8 @@
-import Python_Assignments.NaiveBayes as naive
+import NaiveBayes as naive
 import pandas as pd
+import os
 
-df = pd.read_csv('iris.txt')
+df = pd.read_csv(os.path.join('..', 'iris.txt'))
 target_feature = 'class'
 
 n_bayes = naive.NaiveBayes(df, target_feature)
