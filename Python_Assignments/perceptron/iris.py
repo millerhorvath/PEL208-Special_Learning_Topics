@@ -35,5 +35,8 @@ if __name__ == '__main__':
 
     # Print confusion matrix
     print('##### Iris Experiment\n')
+    print('Weights:')
+    print(p.w)
+    print('')
     print('Confusion Matrix:')
     print(conf_m)
