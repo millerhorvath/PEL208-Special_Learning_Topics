@@ -39,6 +39,8 @@ if __name__ == '__main__':
         test_df = test_df.append(group[30:40])
         validation_df = validation_df.append(group[40:50])
 
+    exit()
+
     y_train = train_df[['class']].copy()
     y_test = test_df[['class']].copy()
     y_validation = validation_df[['class']].copy()

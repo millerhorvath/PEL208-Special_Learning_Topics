@@ -9,7 +9,6 @@ class MLP:
     def __init__(self, x, y, hidden, n=0.1, max_it=2500):
         self.max_it = max_it
         self.n = n
-        self.back_propagation_iterations = 0
         # self.classes = {}
         self.idx_to_class = {v: k for v, k in enumerate(y.astype('category').cat.categories.tolist())}
         self.class_vector = np.identity(len(self.idx_to_class))
@@ -147,7 +146,5 @@ class MLP:
 
             # print(delta_net)
             # exit()
-
-            self.back_propagation_iterations += 1
 
         self.w = deepcopy(best_w)
